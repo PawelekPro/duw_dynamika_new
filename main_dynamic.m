@@ -4,7 +4,7 @@ clc;
 clear
 tic
 
-load_data;
+[Wiezy, q, Sily, Sprezyny, mass_moment, ilosc_cial, ilosc_sprezyn, ilosc_sil] = load_data();
 rows = no_equations(Wiezy);
 
 % T to tablica do zapisu kolejnych chwil
@@ -17,7 +17,7 @@ tstop = 5;
 timestep = 0.001; % Paramtery czasu całkowania
 timespan = tstart:timestep:tstop;
 
-M = MacierzMasowa(Bezwladnosci, ilosc_cial);
+M = MacierzMasowa(mass_moment, ilosc_cial);
 
 q0 = reshape(q(1:length(q)-1,1:3)',[3*(length(q)-1),1]);
 qdot0 = zeros(size(q0)); % Początkowe prędkości
@@ -26,7 +26,7 @@ qdot0 = zeros(size(q0)); % Początkowe prędkości
 disp("INFO: Rozpoczeto obliczenia");
 Y0 = [q0; qdot0]; % Wektor, który będzie całkowany
 OPTIONS = odeset('RelTol', 1e-6, 'AbsTol', 1e-9);
-[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
+[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
 
 
 koniec = num2str(toc);
@@ -39,7 +39,7 @@ Y = Y';
 timepoints = 1:(length(T));
 Ydot = zeros(size(Y));
 for i=timepoints
-	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
+	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
 end
 
 %Wektor położeń:

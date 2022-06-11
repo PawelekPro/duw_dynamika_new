@@ -1,3 +1,4 @@
+function [Wiezy, q, Sily, Sprezyny, Bezwladnosci, ilosc_cial, ilosc_sprezyn, ilosc_sil] = load_data()
 clear all;
 global epsilon
 epsilon= 1e-6;
@@ -81,9 +82,8 @@ Wiezy(9)=cell2struct({'kinematyczny', 'obrotowy', 7, 8, I-c7, I-c8, [], [], [], 
 Wiezy(10)=cell2struct({'kinematyczny', 'obrotowy', 7, 10, L-c7, L-c10, [], [], [], [], [], 'L'}',fieldnames(Wiezy));
 Wiezy(11)=cell2struct({'kinematyczny', 'obrotowy', 8, 9, K-c8, K-c9, [], [], [], [], [], 'K'}',fieldnames(Wiezy));
 Wiezy(12)=cell2struct({'kinematyczny', 'obrotowy', 9, 10,  N-c9, N-c10, [], [], [], [], [], 'N'}',fieldnames(Wiezy));
-Wiezy(13)=cell2struct({'kinematyczny', 'postepowy', 3, 4,  [-0.15;-0.45], [0.15;0.45], 0, omega*((D-A)/norm(D-A)), 0,0,0,'N'}',fieldnames(Wiezy));
-Wiezy(14)=cell2struct({'kinematyczny', 'postepowy', 5, 6, [-0.15;-0.6], [0.15;0.6], 0, omega*((H-B)/norm(H-B)),0, 0,0,'N'}',fieldnames(Wiezy));
-
+Wiezy(13)=cell2struct({'kinematyczny', 'postepowy', 3, 4,  [-0.15;-0.45], [0.15;0.45], 0, omega*((D-A)/norm(D-A)), 0,0,0,'D'}',fieldnames(Wiezy));
+Wiezy(14)=cell2struct({'kinematyczny', 'postepowy', 5, 6, [-0.15;-0.6], [0.15;0.6], 0, omega*((H-B)/norm(H-B)),0, 0,0,'H'}',fieldnames(Wiezy));
 
 Bezwladnosci = struct('m',{},... % masa członu (m)
     'Iz',{}); % moment bezwładności członu względem osi z (I_z)
@@ -112,11 +112,13 @@ Bezwladnosci(9) = cell2struct({5, 0.3}', fieldnames(Bezwladnosci));
 Bezwladnosci(10) = cell2struct({11, 0.3}', fieldnames(Bezwladnosci));
 
 
-Sily(1) = cell2struct({500*[cosd(315); sind(315)], 10, [0.1; -0.05]}', fieldnames(Sily));
+Sily(1) = cell2struct({P*[cosd(alpha); sind(alpha)], 10, M-c10}', fieldnames(Sily));
 
 
-Sprezyny(1) = cell2struct({10000, 500, 4, 3, [0; 0]-[0.05; 0.15], [0.2; 0.6]-[0.15; 0.45], norm([0.2, 0.6])}', fieldnames(Sprezyny));
-Sprezyny(2) = cell2struct({14000, 600, 6, 5, [0.3; 0]-[0.35; 0.2], [0.5; 0.8]-[0.45; 0.6], norm([0.2, 0.8])}', fieldnames(Sprezyny));
+Sprezyny(1) = cell2struct({10000, 500, 4, 3, A-c4, D-c3, norm([D-A])}', fieldnames(Sprezyny));
+Sprezyny(2) = cell2struct({14000, 600, 6, 5, B-c6, H-c5, norm([H-B])}', fieldnames(Sprezyny));
+
+end
 
 
 
