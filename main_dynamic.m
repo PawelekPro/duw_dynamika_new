@@ -4,9 +4,9 @@ clc;
 clear
 tic
 
-[Wiezy, q, Sily, Sprezyny, mass_moment] = load_data();
+[Wiezy, q, Sily, Spring, mass_moment] = load_data();
 ilosc_cial = length(q) - 1;
-ilosc_sprezyn = length(Sprezyny);
+ilosc_sprezyn = length(Spring);
 ilosc_sil = length(Sily);
 rows = no_equations(Wiezy);
 
@@ -29,20 +29,21 @@ qdot0 = zeros(size(q0)); % Początkowe prędkości
 disp("INFO: Rozpoczeto obliczenia");
 Y0 = [q0; qdot0]; % Wektor, który będzie całkowany
 OPTIONS = odeset('RelTol', 1e-6, 'AbsTol', 1e-9);
-[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
+[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Spring, ilosc_sil, Sily),timespan,Y0,OPTIONS);
 
 
 koniec = num2str(toc);
-dispp = ['Czas trwania obliczen: ', koniec];
+dispp = ['INFO: Czas trwania obliczen [s]: ', koniec];
 disp('INFO: Pomyslnie wykonano obliczenia')
 disp(dispp)
 
 Y = Y';    
-    
+ 
+disp('INFO: Trwa generowanie wykresow...')   
 timepoints = 1:(length(T));
 Ydot = zeros(size(Y));
 for i=timepoints
-	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
+	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Spring, ilosc_sil, Sily );
 end
 
 %Wektor położeń:
