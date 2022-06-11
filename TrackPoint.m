@@ -20,7 +20,6 @@ function [p_q, p_dq, p_ddq] = TrackPoint(q,w, Point)
            axr = cross([0,0,q(w(10).bodyj,9)]', [(rot(q(w(10).bodyj,3))*sA)',0]);
            p_ddq = q(w(10).bodyj,7:8) + axr(1:2)+wxwxr(1:2);
     end
-
 end
 
 
