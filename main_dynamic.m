@@ -26,7 +26,7 @@ qdot0 = zeros(size(q0)); % Początkowe prędkości
 disp("INFO: Rozpoczeto obliczenia");
 Y0 = [q0; qdot0]; % Wektor, który będzie całkowany
 OPTIONS = odeset('RelTol', 1e-6, 'AbsTol', 1e-9);
-[T,Y]=ode45(@(t,Y) RHS(t,Y,Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
+[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
 
 
 koniec = num2str(toc);
@@ -39,7 +39,7 @@ Y = Y';
 timepoints = 1:(length(T));
 Ydot = zeros(size(Y));
 for i=timepoints
-	Ydot(:,i) = RHS( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
+	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
 end
 
 %Wektor położeń:
