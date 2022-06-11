@@ -1,91 +1,53 @@
 clear all;
-%%pobranie danych o punktach
-ilosc_pktow=0;
-ilosc_cial=0;
-dane=fopen('dane.txt','r');
-ilosc_pktow=str2num(fgetl(dane));
-punkty=zeros(ilosc_pktow,2);
-ktore_cialo=zeros(ilosc_pktow,1);
-for i=1:ilosc_pktow
-    temp=str2num(fgetl(dane));
-    ktore_cialo(i)=temp(1);
-    punkty(i,:)=temp(2:3);
-end
-ilosc_cial=str2num(fgetl(dane));
-srodki_ciezkosci=zeros(ilosc_cial,2);
-for i=1:ilosc_cial
-   srodki_ciezkosci(i,:)=str2num(fgetl(dane));
-end
-fclose(dane);
-%% Więzy
-wiezy=fopen('wiezy.txt','r');
-ilosc_obr=0;
-ilosc_post=0;
-ilosc_obr=str2num(fgetl(wiezy));
-obrotowe=zeros(ilosc_obr,3);
-for i=1:ilosc_obr
-    obrotowe(i,:)=str2num(fgetl(wiezy));
-end
-ilosc_post=str2num(fgetl(wiezy));
-postepowe=zeros(ilosc_post,5);
-for i=1:ilosc_post
-    postepowe(i,:)=str2num(fgetl(wiezy));
-end
-fclose(wiezy);
-% %% Wymuszenia
-% wymuszenie=fopen('wymuszenie.txt','r');
-% for i=1:8
-%    eval(fgetl(wymuszenie)); 
-% end
-% 
-% ilosc_wym_obr=0;
-% ilosc_wym_post=0;
-% ilosc_wym_obr=str2num(fgetl(wymuszenie));
-% for i=1:ilosc_wym_obr
-%     wym_obr(i,:)=textscan(wymuszenie,'%d %s %s %s\n');
-% end
-% ilosc_wym_post=textscan(wymuszenie,'%d\n');
-% for i=1:2%ilosc_wym_post{1}
-%     wym_post(i,:)=textscan(wymuszenie,'%d %s %s %s\n');
-% end
-% fclose(wymuszenie);
-
-%% masy i momenty to jest dobrze
-masymomenty=fopen('masymomenty.txt','r');
-ilosc_cial=0;
-ilosc_cial=str2num(fgetl(masymomenty));
-masy_i_momenty=zeros(ilosc_cial,2);
-for i=1:ilosc_cial
-    temp=str2num(fgetl(masymomenty));
-    masy_i_momenty(i,:)=temp(1:2);
-end
-fclose(masymomenty);
-
-%% siła obciazajaca
-sila =fopen('sila.txt','r');
-ilosc_sil=0;
-ilosc_sil=str2num(fgetl(sila));
-sily=zeros(ilosc_sil,3);
-for i=1:ilosc_sil
-    sily=str2num(fgetl(sila));
-end
-fclose(sila);
-%% sprezyny
-sprezyny=fopen("sprezyny.txt","r");
-ilosc_sprezyn=0;
-ilosc_sprezyn=str2num(fgetl(sprezyny));
-tab_sprezyny=zeros(ilosc_sprezyn,6);
-for i=1:ilosc_sprezyn
-    temp=str2num(fgetl(sprezyny));
-    tab_sprezyny(i,:)=temp;
-end
-
-%% Stałe zadania typu grawitacja error itp
 global epsilon
 epsilon= 1e-6;
 global grav
 grav= 9.80665;
-%% przypisanie do struktury Wiezy Bezwladnosc sprezyny sily
+
+%wczytywanie współrzędnych punktów z polecenia
+A = [0; 0];
+B = [0.3; 0];
+D = [0.2; 0.6];
+E = [-0.1; 0.7];
+F = [-0.2; 0.8];
+G = [0; 1.2];
+H = [0.5; 0.8];
+I = [0.5; -0.1];
+J = [0.7; 0.3];
+K = [0.8; 0.6];
+L = [1; -0.5];
+M = [1.3; -0.3];
+N = [1.3; 0];
+
+%wczytywanie współrzędnych środków ciężkości z polecenia
+c1 = [0; 0.85];
+c2 = [0.4; 0.75];
+c3 = [0.15; 0.45];
+c4 = [0.05; 0.15];
+c5 = [0.45; 0.6];
+c6 = [0.35; 0.2];
+c7 = [0.4; 0.1];
+c8 = [0.65; 0.25];
+c9 = [1.05; 0.3];
+c10 = [1.2; -0.25];
+
+q(1,:) = [c1; 0];
+q(2,:) = [c2; 0];
+q(3,:) = [c3; 0];
+q(4,:) = [c4; 0];
+q(5,:) = [c5; 0];
+q(6,:) = [c6; 0];
+q(7,:) = [c7; 0];
+q(8,:) = [c8; 0];
+q(9,:) = [c9; 0];
+q(10,:) = [c10; 0];
+q(11,:) = [0; 0; 0];
+q = [q, zeros(size(q,1),6)];
+
+% macierz Omega
+omega = [0 -1; 1 0];
+
+%deklaracja struktury
 Wiezy = struct('typ',{},...
     'klasa',{},... % jak to para? para postepowa czy obrotowa 
     'bodyi',{},... %  nr pierwszego ciala
@@ -96,10 +58,42 @@ Wiezy = struct('typ',{},...
     'perp',{},... % wersor prostopadly do osi ruchu w ukladzie j-tym (gdy pary postepowa)
     'fodt',{},... % funkcja od czasu dla wiezow dopisanych
     'dotfodt',{},... % pochodna funkcji od czasu dla wiezow dopisanych
-    'ddotfodt',{}); % druga pochodna funkcji od czasu dla wiezow dopisanych
+    'ddotfodt',{},... % druga pochodna funkcji od czasu dla wiezow dopisanych
+    'point_name',{});
+
+ilosc_obr=10;
+ilosc_post=2;
+ilosc_cial=10;
+ilosc_sprezyn=2;
+ilosc_sil=1;
+
+%przypisanie wszystkich rodzajów więzów do elementów struktury
+Wiezy(1)=cell2struct({'kinematyczny', 'obrotowy', 0, 1, E, E-c1, [], [], [], [], [],'E'}',fieldnames(Wiezy));
+Wiezy(2)=cell2struct({'kinematyczny', 'obrotowy', 0, 4, A, A-c4, [], [], [], [], [],'A'}',fieldnames(Wiezy));
+Wiezy(3)=cell2struct({'kinematyczny', 'obrotowy', 0, 6,  B, B-c6, [], [], [], [], [],'B'}',fieldnames(Wiezy));
+Wiezy(4)=cell2struct({'kinematyczny', 'obrotowy', 1, 2, G-c1, G-c2, [], [], [], [], [],'G'}',fieldnames(Wiezy));
+Wiezy(5)=cell2struct({'kinematyczny', 'obrotowy', 1, 3, D-c1, D-c3, [], [], [], [], [],'D'}',fieldnames(Wiezy));
+Wiezy(6)=cell2struct({'kinematyczny', 'obrotowy', 1, 7,  F-c1, F-c7, [], [], [], [], [],'F'}',fieldnames(Wiezy));
+Wiezy(7)=cell2struct({'kinematyczny', 'obrotowy', 2, 8, J-c2, J-c8, [], [], [], [], [],'J'}',fieldnames(Wiezy));
+Wiezy(8)=cell2struct({'kinematyczny', 'obrotowy', 2, 5,  H-c2, H-c5, [], [], [], [], [],'H'}',fieldnames(Wiezy));
+Wiezy(9)=cell2struct({'kinematyczny', 'obrotowy', 7, 8, I-c7, I-c8, [], [], [], [], [], 'I'}',fieldnames(Wiezy));
+Wiezy(10)=cell2struct({'kinematyczny', 'obrotowy', 7, 10, L-c7, L-c10, [], [], [], [], [], 'L'}',fieldnames(Wiezy));
+Wiezy(11)=cell2struct({'kinematyczny', 'obrotowy', 8, 9, K-c8, K-c9, [], [], [], [], [], 'K'}',fieldnames(Wiezy));
+Wiezy(12)=cell2struct({'kinematyczny', 'obrotowy', 9, 10,  N-c9, N-c10, [], [], [], [], [], 'N'}',fieldnames(Wiezy));
+Wiezy(13)=cell2struct({'kinematyczny', 'postepowy', 3, 4,  [-0.15;-0.45], [0.15;0.45], 0, omega*((D-A)/norm(D-A)), 0,0,0,'N'}',fieldnames(Wiezy));
+Wiezy(14)=cell2struct({'kinematyczny', 'postepowy', 5, 6, [-0.15;-0.6], [0.15;0.6], 0, omega*((H-B)/norm(H-B)),0, 0,0,'N'}',fieldnames(Wiezy));
+
+
+% Dane z polecenia
+alpha = 315;
+P = 500;
 
 Bezwladnosci = struct('m',{},... % masa członu (m)
     'Iz',{}); % moment bezwładności członu względem osi z (I_z)
+
+Sily = struct('F',{}...     % Wartość siły [N]
+    ,'bodyi',{}...            % Numer części do której jest przyłożona siła/moment
+    ,'sA',{});  
 
 Sprezyny = struct('k',{},... % sztywnosc sprezyny
     'c',{},... % tlumienie w sprezynie
@@ -109,55 +103,33 @@ Sprezyny = struct('k',{},... % sztywnosc sprezyny
     'sB',{},... % punkt przylozenia sprezyny do ciala j w j-tym ukladzie lokalnym
     'd0',{}); % dlugosc swobodna sprezyny
 
-Sily = struct('F',{},... % wektor przylozonej sily
-    'bodyi',{},... % numer ciala, do ktorego przylozono sile
-    'sA',{}); % punkt przylozenia sily do ciala i w i-tym ukladzie lokalnym
+Bezwladnosci(1) = cell2struct({22, 0.7}', fieldnames(Bezwladnosci));
+Bezwladnosci(2) = cell2struct({21, 1.6}', fieldnames(Bezwladnosci));
+Bezwladnosci(3) = cell2struct({2, 0.1}', fieldnames(Bezwladnosci));
+Bezwladnosci(4) = cell2struct({2, 0.1}', fieldnames(Bezwladnosci));
+Bezwladnosci(5) = cell2struct({3, 0.2}', fieldnames(Bezwladnosci));
+Bezwladnosci(6) = cell2struct({3, 0.2}', fieldnames(Bezwladnosci));
+Bezwladnosci(7) = cell2struct({25, 5}', fieldnames(Bezwladnosci));
+Bezwladnosci(8) = cell2struct({7, 0.4}', fieldnames(Bezwladnosci));
+Bezwladnosci(9) = cell2struct({5, 0.3}', fieldnames(Bezwladnosci));
+Bezwladnosci(10) = cell2struct({11, 0.3}', fieldnames(Bezwladnosci));
 
 
-%struktura wiezow
-wszystkie_wiezy=ilosc_obr+ilosc_post;%+ilosc_wym_obr+ilosc_wym_post{1};
-for i=1:ilosc_obr
-        if (obrotowe(i,2)~=0 && obrotowe(i,3)~=0)
-        Wiezy(i)=cell2struct({'kinematyczny','obrotowy',obrotowe(i,2),obrotowe(i,3),(punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,2),:))',(punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,3),:))',[],[],[],[],[]}',fieldnames(Wiezy));
-        elseif (obrotowe(i,2)==0)
-            Wiezy(i)=cell2struct({'kinematyczny','obrotowy',obrotowe(i,2),obrotowe(i,3),(punkty(obrotowe(i,1),:))',(punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,3),:))',[],[],[],[],[]}',fieldnames(Wiezy));
-        elseif (obrotowe(i,3)==0)
-            Wiezy(i)=cell2struct({'kinematyczny','obrotowy',obrotowe(i,2),obrotowe(i,3),(punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,2),:))',(punkty(obrotowe(i,1),:))',[],[],[],[],[]}',fieldnames(Wiezy));
-        end
-end
-for i=1:ilosc_post
-    if ( i<=ilosc_post)
-        pom=punkty(postepowe(i,2),:)-punkty(postepowe(i,1),:);
-        pom=[-pom(2) pom(1)];
-        Wiezy(i+ilosc_obr)=cell2struct({'kinematyczny','postepowy',postepowe(i,3),postepowe(i,4),(punkty(postepowe(i,1),:)-srodki_ciezkosci(postepowe(i,3),:))',(punkty(postepowe(i,2),:)-srodki_ciezkosci(postepowe(i,4),:))',0,pom'/norm(pom),[],[],[]}',fieldnames(Wiezy));
-    end
-end
+Sily(1) = cell2struct({500*[cosd(315); sind(315)], 10, [0.1; -0.05]}', fieldnames(Sily));
 
-% wym_post = ["1" "l1+a1*sin(omega1*t+phi1)" "omega1*a1*cos(omega1*t+phi1)" "-omega1*omega1*a1*sin(omega1*t+phi1)" ; "2" "l2+a2*sin(omega2*t+phi2)" "omega2*a2*cos(omega2*t+phi2)" "-omega2*omega2*a2*sin(omega2*t+phi2)" ];
-% for i=1:double(ilosc_wym_post{1,1})
-%    pom=punkty(postepowe(i,2),:)-punkty(postepowe(i,1),:);
-%    Wiezy(i+ilosc_obr+ilosc_post)=cell2struct({'dopisany','postepowy',postepowe(i,3),postepowe(i,4),(punkty(postepowe(i,1),:)-srodki_ciezkosci(postepowe(i,3),:))',(punkty(postepowe(i,2),:)-srodki_ciezkosci(postepowe(i,4),:))',0,pom'/norm(pom),string(wym_post(i,2)),string(wym_post(i,3)),string(wym_post(i,4))}',fieldnames(Wiezy));
-% end
-% 
-% for i=1:ilosc_wym_obr
-%    Wiezy(i+ilosc_obr+ilosc_post+ilosc_wym_post{1})=cell2struct({'dopisany','obrotowy',obrotowe(i,2),obrotowe(i,3),punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,2),:),punkty(obrotowe(i,1),:)-srodki_ciezkosci(obrotowe(i,3),:),[],[],wym_obr(i,2),wym_obr(i,3),wym_obr(i,4)}',fieldnames(Wiezy));
-% end
 
-%struktura sil
-for i=1:ilosc_sil
-    Sily(1) = cell2struct({[sily(i,1)*cosd(sily(i,2)); sily(i,1)*sind(sily(i,2))], ktore_cialo(sily(i,3)), (punkty(sily(i,3),:)-srodki_ciezkosci(ktore_cialo(sily(i,3)),:))'}', fieldnames(Sily));
-end
+Sprezyny(1) = cell2struct({10000, 500, 4, 3, [0; 0]-[0.05; 0.15], [0.2; 0.6]-[0.15; 0.45], norm([0.2, 0.6])}', fieldnames(Sprezyny));
+Sprezyny(2) = cell2struct({14000, 600, 6, 5, [0.3; 0]-[0.35; 0.2], [0.5; 0.8]-[0.45; 0.6], norm([0.2, 0.8])}', fieldnames(Sprezyny));
 
-%struktura sprezyny
-for i=1:ilosc_sprezyn
-    Sprezyny(i) = cell2struct({tab_sprezyny(i,1), tab_sprezyny(i,2), tab_sprezyny(i,3), tab_sprezyny(i,4), (punkty(tab_sprezyny(i,5),:)-srodki_ciezkosci(tab_sprezyny(i,3),:))', (punkty(tab_sprezyny(i,6),:)-srodki_ciezkosci(tab_sprezyny(i,4),:))', norm(punkty(tab_sprezyny(i,5),:)-punkty(tab_sprezyny(i,6),:))}', fieldnames(Sprezyny)); 
-end
 
-%structura bezwladnosci
 
-for i=1:ilosc_cial
-    Bezwladnosci(i)=cell2struct({masy_i_momenty(i,1),masy_i_momenty(i,2)}', fieldnames(Bezwladnosci));
-end
+
+
+
+
+
+
+
 
 
 
