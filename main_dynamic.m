@@ -13,7 +13,7 @@ rows = no_equations(Wiezy);
 % D2Q to tablica do zapisu rozwiazan zadania o przyspieszeniu w kolejnych chwilach
 
 tstart = 0;
-tstop = 5;
+tstop = 1;
 timestep = 0.001; % Paramtery czasu całkowania
 timespan = tstart:timestep:tstop;
 
@@ -54,9 +54,69 @@ D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
 %Wskazanie czlonu, dla ktorego wyznaczone zostaną predkosci i przyspieszenia katowe 
 body_number = 10;
-wskaz_punkt = 'M';
+Point = 'H';
 
 plot(T,180/pi*D2Q(24,:))
+
+sz = size(Q);
+q_new = zeros(2,sz(2));
+dq_new = zeros(2,sz(2));
+ddq_new = zeros(2,sz(2));
+for i=1:sz(2)
+    tmp = [(reshape(Q(:,i),[3,10]))',(reshape(DQ(:,i),[3,10]))',(reshape(D2Q(:,i),[3,10]))'];
+    [pq,pdq,pddq] = TrackPoint(tmp,Wiezy,Point);
+    q_new(:,i) = pq';
+    dq_new(:,i) = pdq';
+    ddq_new(:,i) = pddq';
+end
+
+figure
+plot(T(:,1),q_new(1,:));
+grid on
+legend("x");
+title("Polożenie x");
+xlabel("Czas [s]")
+ylabel("x[m]")
+
+figure
+plot(T(:,1),q_new(2,:));
+grid on
+legend("y");
+title("Polożenie y");
+xlabel("Czas [s]")
+ylabel("y[m]")
+
+figure
+plot(T(:,1),dq_new(1,:));
+grid on
+legend("vx");
+title("Predkosc x");
+xlabel("Czas [s]")
+ylabel("vx[m]")
+
+figure
+plot(T(:,1),dq_new(2,:));
+grid on
+legend("vy");
+title("Polożenie y");
+xlabel("Czas [s]")
+ylabel("cy[m]")
+
+figure
+plot(T(:,1),ddq_new(1,:));
+grid on
+legend("ax");
+title("Przyspieszenie x");
+xlabel("Czas [s]")
+ylabel("ax[m]")
+
+figure
+plot(T(:,1),ddq_new(2,:));
+grid on
+legend("ay");
+title("Przyspieszenie y");
+xlabel("Czas [s]")
+ylabel("ay[m]")
 
 
 
