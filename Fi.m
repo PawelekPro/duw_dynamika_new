@@ -1,4 +1,4 @@
-function [ Phi ] = WektorPhi( q, t, Wiezy, rows )
+function [ Phi ] = Fi( q, t, Wiezy, rows )
 %WEKTORPHI Wektor rownan wiezow
 
 %input_wymiary;

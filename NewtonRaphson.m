@@ -1,34 +1,34 @@
 function q=NewtonRaphson(q0,t, Wiezy, rows)
 % q=NewRaph(q0,t)
-%   Rozwiπzanie uk≥adu rÛwnaÒ metodπ Newtona-Raphsona.
-% Wejúcie:
-%   q0 - przybliøenie startowe,
-%   t - chwila, dla ktÛrej poszukiwane jest rozwiπzanie.
-% Wyjúcie:
-%   q - uzyskane rozwiπzanie.
+%   RozwiƒÖzanie uk≈Çadu r√≥wna≈Ñ metodƒÖ Newtona-Raphsona.
+% Wej≈õcie:
+%   q0 - przybli≈ºenie startowe,
+%   t - chwila, dla kt√≥rej poszukiwane jest rozwiƒÖzanie.
+% Wyj≈õcie:
+%   q - uzyskane rozwiƒÖzanie.
 %
-% Uk≥ad rÛwnaÒ musi byÊ wpisany w pliku Wiezy.m.
-% Macierz Jacobiego uk≥adu rÛwnaÒ musi byÊ wpisana w pliku Jakobian.m.
+% Uk≈Çad r√≥wna≈Ñ musi byƒá wpisany w pliku Wiezy.m.
+% Macierz Jacobiego uk≈Çadu r√≥wna≈Ñ musi byƒá wpisana w pliku Jakobian.m.
 %
 %*************************************************************
-%   Program stanowi za≥πcznik do ksiπøki:
-%   Frπczek J., Wojtyra M.: Kinematyka uk≥adÛw wielocz≥onowych.
+%   Program stanowi za≈ÇƒÖcznik do ksiƒÖ≈ºki:
+%   FrƒÖczek J., Wojtyra M.: Kinematyka uk≈Çad√≥w wielocz≈Çonowych.
 %                           Metody obliczeniowe. WNT 2007.
 %   Wersja 1.0
 %*************************************************************
 
 q=q0;
 
-F=WektorPhi(q,t, Wiezy, rows);
+F=Fi(q,t, Wiezy, rows);
 iter=1; % Licznik iteracji
 while ( (norm(F)>epsilon()) && (iter < 200) )
-    F=WektorPhi(q,t, Wiezy, rows);
+    F=Fi(q,t, Wiezy, rows);
     Fq=MacierzJacobiego(q,t,Wiezy,rows);
-    q=q-Fq\F;  % Fq\F jest rÛwnowaøne inv(Fq)*F, ale mniej kosztowne numerycznie
+    q=q-Fq\F;  % Fq\F jest r√≥wnowa≈ºne inv(Fq)*F, ale mniej kosztowne numerycznie
     iter=iter+1;
 end
 if iter >= 200
-    error('B£•D: Po 200 iteracjach Newtona-Raphsona nie uzyskano zbieønoúci ');
+    error('B≈ÅƒÑD: Po 200 iteracjach Newtona-Raphsona nie uzyskano zbie≈ºno≈õci ');
     norm(F)
     q=q0;
 end

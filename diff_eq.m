@@ -17,7 +17,7 @@ qdot = Y((middle+1):(2*middle),1);
 % Wektor Gamma -> [ Gamma ] = WektorGamma( q, qdot, t, Wiezy, rows )
 % Wektor równan więzów -> [ Phi ] = WektorPhi( q, t, Wiezy, rows )
 
-F = WektorPhi(q,t,Wiezy,rows);
+F = Fi(q,t,Wiezy,rows);
 Fdot = MacierzJacobiego(q,t,Wiezy,rows)*qdot;
 
 Jacob = MacierzJacobiego( q, t, Wiezy, rows );
