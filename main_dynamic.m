@@ -4,7 +4,10 @@ clc;
 clear
 tic
 
-[Wiezy, q, Sily, Sprezyny, mass_moment, ilosc_cial, ilosc_sprezyn, ilosc_sil] = load_data();
+[Wiezy, q, Sily, Sprezyny, mass_moment] = load_data();
+ilosc_cial = length(q) - 1;
+ilosc_sprezyn = length(Sprezyny);
+ilosc_sil = length(Sily);
 rows = no_equations(Wiezy);
 
 % T to tablica do zapisu kolejnych chwil

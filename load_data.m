@@ -1,4 +1,4 @@
-function [Wiezy, q, Sily, Sprezyny, Bezwladnosci, ilosc_cial, ilosc_sprezyn, ilosc_sil] = load_data()
+function [Wiezy, q, Sily, Sprezyny, mass_moment] = load_data()
 clear all;
 global epsilon
 epsilon= 1e-6;
@@ -85,7 +85,7 @@ Wiezy(12)=cell2struct({'kinematyczny', 'obrotowy', 9, 10,  N-c9, N-c10, [], [], 
 Wiezy(13)=cell2struct({'kinematyczny', 'postepowy', 3, 4,  [-0.15;-0.45], [0.15;0.45], 0, omega*((D-A)/norm(D-A)), 0,0,0,'D'}',fieldnames(Wiezy));
 Wiezy(14)=cell2struct({'kinematyczny', 'postepowy', 5, 6, [-0.15;-0.6], [0.15;0.6], 0, omega*((H-B)/norm(H-B)),0, 0,0,'H'}',fieldnames(Wiezy));
 
-Bezwladnosci = struct('m',{},... % masa członu (m)
+mass_moment = struct('m',{},... % masa członu (m)
     'Iz',{}); % moment bezwładności członu względem osi z (I_z)
 
 Sily = struct('F',{}...     % Wartość siły [N]
@@ -100,16 +100,16 @@ Sprezyny = struct('k',{},... % sztywnosc sprezyny
     'sB',{},... % punkt przylozenia sprezyny do ciala j w j-tym ukladzie lokalnym
     'd0',{}); % dlugosc swobodna sprezyny
 
-Bezwladnosci(1) = cell2struct({22, 0.7}', fieldnames(Bezwladnosci));
-Bezwladnosci(2) = cell2struct({21, 1.6}', fieldnames(Bezwladnosci));
-Bezwladnosci(3) = cell2struct({2, 0.1}', fieldnames(Bezwladnosci));
-Bezwladnosci(4) = cell2struct({2, 0.1}', fieldnames(Bezwladnosci));
-Bezwladnosci(5) = cell2struct({3, 0.2}', fieldnames(Bezwladnosci));
-Bezwladnosci(6) = cell2struct({3, 0.2}', fieldnames(Bezwladnosci));
-Bezwladnosci(7) = cell2struct({25, 5}', fieldnames(Bezwladnosci));
-Bezwladnosci(8) = cell2struct({7, 0.4}', fieldnames(Bezwladnosci));
-Bezwladnosci(9) = cell2struct({5, 0.3}', fieldnames(Bezwladnosci));
-Bezwladnosci(10) = cell2struct({11, 0.3}', fieldnames(Bezwladnosci));
+mass_moment(1) = cell2struct({22, 0.7}', fieldnames(mass_moment));
+mass_moment(2) = cell2struct({21, 1.6}', fieldnames(mass_moment));
+mass_moment(3) = cell2struct({2, 0.1}', fieldnames(mass_moment));
+mass_moment(4) = cell2struct({2, 0.1}', fieldnames(mass_moment));
+mass_moment(5) = cell2struct({3, 0.2}', fieldnames(mass_moment));
+mass_moment(6) = cell2struct({3, 0.2}', fieldnames(mass_moment));
+mass_moment(7) = cell2struct({25, 5}', fieldnames(mass_moment));
+mass_moment(8) = cell2struct({7, 0.4}', fieldnames(mass_moment));
+mass_moment(9) = cell2struct({5, 0.3}', fieldnames(mass_moment));
+mass_moment(10) = cell2struct({11, 0.3}', fieldnames(mass_moment));
 
 
 Sily(1) = cell2struct({P*[cosd(alpha); sind(alpha)], 10, M-c10}', fieldnames(Sily));
