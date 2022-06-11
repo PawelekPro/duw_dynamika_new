@@ -4,7 +4,7 @@ clc;
 clear
 tic
 
-pobierz_dane;
+load_data;
 rows = no_equations(Wiezy);
 
 % T to tablica do zapisu kolejnych chwil
@@ -36,20 +36,25 @@ disp(dispp)
 
 Y = Y';    
     
-timepoints = 1:( length(T) );
+timepoints = 1:(length(T));
 Ydot = zeros(size(Y));
-for iter=timepoints
-	Ydot(:,iter) = RHS( T(iter), Y(:,iter), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
+for i=timepoints
+	Ydot(:,i) = RHS( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
 end
 
 %Wektor położeń:
-Q = Y( 1:3*ilosc_cial , : )];
+Q = [Y( 1:3*ilosc_cial , : )];
 
 %Wektor predkosci
 DQ = [Y( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
 %Wektor przyspieszen
 D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
+
+
+%Wskazanie czlonu, dla ktorego wyznaczone zostaną predkosci i przyspieszenia katowe 
+body_number = 10;
+wskaz_punkt = 'M';
 
 plot(T,180/pi*D2Q(24,:))
 
