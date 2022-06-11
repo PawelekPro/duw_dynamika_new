@@ -64,8 +64,6 @@ Wiezy = struct('typ',{},...
     'ddotfodt',{},... % druga pochodna funkcji od czasu dla wiezow dopisanych
     'point_name',{});
 
-ilosc_obr = 10;
-ilosc_post = 2;
 ilosc_cial = 10;
 ilosc_sprezyn = 2;
 ilosc_sil = 1;
