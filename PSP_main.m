@@ -16,6 +16,7 @@ close all;clc;clear
 pobierz_dane;
 % zmienna do wyznaczania liczby rownan wiezow 
 rows = 0;
+tic
 
 for l=1:length(Wiezy)
     if(lower(Wiezy(l).typ) == "dopisany")
@@ -62,13 +63,18 @@ qdot0 = zeros(size(q0)); % Początkowe prędkości
 
 Y0 = [q0; qdot0]; % Wektor, który będzie całkowany
 
-disp("Rozpoczęto obliczenia");
+disp("INFO: Rozpoczeto obliczenia");
 
 OPTIONS = odeset('RelTol', 1e-6, 'AbsTol', 1e-9);
 [T,Y]=ode45(@(t,Y) RHS(t,Y,Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
     % Ponieważ macierz bezwładności nie zmienia się w czasie, więc aby nie
     % obliczać jej za każdym razem od nowa, jest po prostu przekazywana
     % jako argument funkcji całkowanej
+
+koniec = num2str(toc);
+dispp = ['Czas trwania obliczen: ', koniec];
+disp('INFO: Pomyslnie wykonano obliczenia')
+disp(dispp)
 
 Y = Y';    
     
@@ -78,16 +84,16 @@ for iter=timepoints
 	Ydot(:,iter) = RHS( T(iter), Y(:,iter), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
 end
 
-%% PAUSE
-%Porządkowanie danych wyjściowych
 %Wektor położeń:
 Q = [ Y( 1:3*ilosc_cial , : )];
+
 %Wektor predkosci
 DQ = [ Y( 3*ilosc_cial+1:6*ilosc_cial , : )];
+
 %Wektor przyspieszen
 D2Q = [ Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
-postprocessor;
+
 
 
 
