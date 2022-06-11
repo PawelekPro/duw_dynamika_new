@@ -23,7 +23,7 @@ Fdot = MacierzJacobiego(q,t,Wiezy,rows)*qdot;
 Jacob = MacierzJacobiego( q, t, Wiezy, rows );
 A = [M, Jacob'; Jacob, zeros(rows)];
 b = [SilyUogolnione( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot );...
-    WektorGamma( q, qdot, t, Wiezy, rows ) - 2*alpha*Fdot - beta*beta*F];
+    Gamma( q, qdot, t, Wiezy, rows ) - 2*alpha*Fdot - beta*beta*F];
 
 x = A\b;
 
