@@ -1,4 +1,4 @@
-function [ Q ] = SilyUogolnione( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot )
+function [ Q ] = Force_Vector( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot )
 %SILYUOGOLNIONE Funkcja zwracająca wektor sił uogólnionych w zależności od
 %aktualnej konfiguracji mechanizmu
 grav= 9.80665;
