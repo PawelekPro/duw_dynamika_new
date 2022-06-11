@@ -1,4 +1,4 @@
-function [ Gamma ] = WektorGamma( q, qdot, t, Wiezy, rows )
+function [ Gamma ] = Gamma( q, qdot, t, Wiezy, rows )
 %WEKTORGAMMA Funkcja obliczajaca wektor Gamma potrzebny w zadaniu o
 %przyspieszeniach
 

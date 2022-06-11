@@ -1,29 +1,29 @@
-function [Ydot] = RHS(t,Y,Wiezy,rows,M, NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily)
-%RHS Wektor prawych stron w równaniu liniowym dynamiki
+function [Ydot] = diff_eq(t,Y,Wiezy,rows,M, NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily)
+%RHS Wektor prawych stron w rÃ³wnaniu liniowym dynamiki
 
 alpha = 10;
 beta = 10;
 
-% Pierwsza po³owa wektora Y to po³o¿enia, druga po³owa to prêdkoœci
+% Pierwsza poÅ‚owa wektora Y to poÅ‚oÅ¼enia, druga poÅ‚owa to prÄ™dkoÅ›ci
 middle = uint16(length(Y)/2);
 
 q = Y(1:middle,1);
 qdot = Y((middle+1):(2*middle),1);
 
-% Odpowiednie macierze s¹ wyznaczane przez funkcje:
+% Odpowiednie macierze sÄ… wyznaczane przez funkcje:
 % Macierz masowa -> [ M ] = MacierzMasowa( Bezwladnosci, NoB )
 % Macierz Jacobiego -> [ Jacob ] = MacierzJacobiego( q, t, Wiezy, rows )
-% Wektor si³ uogólnionych -> [ Q ] = SilyUogolnione( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot )
+% Wektor siÅ‚ uogÃ³lnionych -> [ Q ] = SilyUogolnione( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot )
 % Wektor Gamma -> [ Gamma ] = WektorGamma( q, qdot, t, Wiezy, rows )
-% Wektor równan wiêzów -> [ Phi ] = WektorPhi( q, t, Wiezy, rows )
+% Wektor rÃ³wnan wiÄ™zÃ³w -> [ Phi ] = WektorPhi( q, t, Wiezy, rows )
 
-F = WektorPhi(q,t,Wiezy,rows);
+F = Fi(q,t,Wiezy,rows);
 Fdot = MacierzJacobiego(q,t,Wiezy,rows)*qdot;
 
 Jacob = MacierzJacobiego( q, t, Wiezy, rows );
 A = [M, Jacob'; Jacob, zeros(rows)];
 b = [SilyUogolnione( NoB, Bezwladnosci, NoS, Sprezyny, NoF, Sily, q, qdot );...
-    WektorGamma( q, qdot, t, Wiezy, rows ) - 2*alpha*Fdot - beta*beta*F];
+    Gamma( q, qdot, t, Wiezy, rows ) - 2*alpha*Fdot - beta*beta*F];
 
 x = A\b;
 
