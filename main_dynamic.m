@@ -4,7 +4,10 @@ clc;
 clear
 tic
 
-load_data;
+[Wiezy, q, Sily, Spring, mass_moment] = load_data();
+ilosc_cial = length(q) - 1;
+ilosc_sprezyn = length(Spring);
+ilosc_sil = length(Sily);
 rows = no_equations(Wiezy);
 
 % T to tablica do zapisu kolejnych chwil
@@ -17,7 +20,7 @@ tstop = 5;
 timestep = 0.001; % Paramtery czasu całkowania
 timespan = tstart:timestep:tstop;
 
-M = MacierzMasowa(Bezwladnosci, ilosc_cial);
+M = MacierzMasowa(mass_moment, ilosc_cial);
 
 q0 = reshape(q(1:length(q)-1,1:3)',[3*(length(q)-1),1]);
 qdot0 = zeros(size(q0)); % Początkowe prędkości
@@ -26,20 +29,24 @@ qdot0 = zeros(size(q0)); % Początkowe prędkości
 disp("INFO: Rozpoczeto obliczenia");
 Y0 = [q0; qdot0]; % Wektor, który będzie całkowany
 OPTIONS = odeset('RelTol', 1e-6, 'AbsTol', 1e-9);
-[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily),timespan,Y0,OPTIONS);
+[T,Y]=ode45(@(t,Y) diff_eq(t,Y,Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Spring, ilosc_sil, Sily),timespan,Y0,OPTIONS);
 
 
 koniec = num2str(toc);
-dispp = ['Czas trwania obliczen: ', koniec];
+dispp = ['INFO: Czas trwania obliczen [s]: ', koniec];
 disp('INFO: Pomyslnie wykonano obliczenia')
 disp(dispp)
 
-Y = Y';    
-    
+Y = Y';   
+
+body_str=input("Dane na temat któego ciala chcesz zobaczy? (1-10) : ",'s');
+Point=input("Dane na temat któego punktu chcesz zobaczy? ((A-M)): ",'s');
+
+disp('INFO: Trwa generowanie wykresow...')   
 timepoints = 1:(length(T));
 Ydot = zeros(size(Y));
 for i=timepoints
-	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, Bezwladnosci, ilosc_sprezyn, Sprezyny, ilosc_sil, Sily );
+	Ydot(:,i) = diff_eq( T(i), Y(:,i), Wiezy,rows,M, ilosc_cial, mass_moment, ilosc_sprezyn, Spring, ilosc_sil, Sily );
 end
 
 %Wektor położeń:
@@ -54,18 +61,13 @@ D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
 % POSTPROCESOR
 %Wskazanie czlonu, dla ktorego wyznaczone zostaną predkosci i przyspieszenia katowe 
 
-
- 
-    body_str=input("Dane na temat któego ciala chcesz zobaczy? (1-10) : ",'s');
-    Point=input("Dane na temat któego punktu chcesz zobaczy? ((A-M)\{C}): ",'s');
-    close all
-    body_number=str2num(body_str(1));
+    body_number=str2num(body_str);
 
     figure
     plot(T,180/pi*D2Q(3*body_number,:))
     grid on
     legend("eps");
-    tytul2 = ['Przyspieszenie kątowe ciała ', num2str(body_number)];
+    tytul2 = ['Przyspieszenie kątowe ciała ', body_str];
     title(tytul2)
     xlabel("Czas [s]")
     ylabel("a[deg/s2]")
@@ -74,7 +76,7 @@ D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
     plot(T,180/pi*DQ(3*body_number,:))
     grid on
     legend("omega");
-    tytul1 = ['Prędkość kątowa ciała ', num2str(body_number)];
+    tytul1 = ['Prędkość kątowa ciała ', body_str];
     title(tytul1)
     xlabel("Czas [s]")
     ylabel("a[deg/s]")
