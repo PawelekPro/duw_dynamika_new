@@ -1,4 +1,4 @@
-function [ R ] = RotMat( phi )
+function [ R ] = rot( phi )
 %ROTMAT Macierz obrotu 2D przy zadanym kacie phi
 
 R = [cos(phi), -sin(phi);
