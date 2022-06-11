@@ -53,93 +53,98 @@ D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
 % POSTPROCESOR
 %Wskazanie czlonu, dla ktorego wyznaczone zostaną predkosci i przyspieszenia katowe 
-body_number = 10;
-Point = 'M';
-
-figure
-plot(T,180/pi*D2Q(3*body_number,:))
-grid on
-legend("eps");
-tytul2 = ['Przyspieszenie kątowe ciała ', num2str(body_number)];
-title(tytul2)
-xlabel("Czas [s]")
-ylabel("a[deg/s2]")
-
-figure
-plot(T,180/pi*DQ(3*body_number,:))
-grid on
-legend("omega");
-tytul1 = ['Prędkość kątowa ciała ', num2str(body_number)];
-title(tytul1)
-xlabel("Czas [s]")
-ylabel("a[deg/s]")
 
 
-sz = size(Q);
-q_new = zeros(2,sz(2));
-dq_new = zeros(2,sz(2));
-ddq_new = zeros(2,sz(2));
-for i=1:sz(2)
-    tmp = [(reshape(Q(:,i),[3,10]))',(reshape(DQ(:,i),[3,10]))',(reshape(D2Q(:,i),[3,10]))'];
-    [pq,pdq,pddq] = TrackPoint(tmp,Wiezy,Point);
-    q_new(:,i) = pq';
-    dq_new(:,i) = pdq';
-    ddq_new(:,i) = pddq';
-end
+ 
+    body_str=input("Dane na temat któego ciala chcesz zobaczy? (1-10) : ",'s');
+    Point=input("Dane na temat któego punktu chcesz zobaczy? ((A-M)\{C}): ",'s');
+    close all
+    body_number=str2num(body_str(1));
 
-figure
-plot(T(:,1),q_new(1,:));
-grid on
-legend("x");
-title3 = ['Współrzędna X punktu ', Point, ' w funkcji czasu'];
-title(title3)
-xlabel("Czas [s]")
-ylabel("x[m]")
-
-figure
-plot(T(:,1),q_new(2,:));
-grid on
-legend("y");
-tytul4 = ['Współrzędna Y punktu ', Point, ' w funkcji czasu'];
-title(tytul4)
-xlabel("Czas [s]")
-ylabel("y[m]")
-
-figure
-plot(T(:,1),dq_new(1,:));
-grid on
-legend("vx");
-tytul5 = ['Składowa X prędkości liniowej punktu ',Point ,' mechanizmu'];
-title(tytul5)
-xlabel("Czas [s]")
-ylabel("vx[m/s]")
-
-figure
-plot(T(:,1),dq_new(2,:));
-grid on
-legend("vy");
-tytul6 = ['Składowa Y prędkości liniowej punktu ',Point ,' mechanizmu'];
-title(tytul6)
-xlabel("Czas [s]")
-ylabel("vy[m/s]")
-
-figure
-plot(T(:,1),ddq_new(1,:));
-grid on
-legend("ax");
-tytul7 = ['Składowa X przyspieszenia liniowego punktu ', Point, ' mechanizmu'];
-title(tytul7)
-xlabel("Czas [s]")
-ylabel("ax[m/s2]")
-
-figure
-plot(T(:,1),ddq_new(2,:));
-grid on
-legend("ay");
-tytul8 = ['Składowa Y przyspieszenia liniowego punktu ', Point, ' mechanizmu'];
-title(tytul8)
-xlabel("Czas [s]")
-ylabel("ay[m/s2]")
+    figure
+    plot(T,180/pi*D2Q(3*body_number,:))
+    grid on
+    legend("eps");
+    tytul2 = ['Przyspieszenie kątowe ciała ', num2str(body_number)];
+    title(tytul2)
+    xlabel("Czas [s]")
+    ylabel("a[deg/s2]")
+    
+    figure
+    plot(T,180/pi*DQ(3*body_number,:))
+    grid on
+    legend("omega");
+    tytul1 = ['Prędkość kątowa ciała ', num2str(body_number)];
+    title(tytul1)
+    xlabel("Czas [s]")
+    ylabel("a[deg/s]")
+    
+    
+    sz = size(Q);
+    q_new = zeros(2,sz(2));
+    dq_new = zeros(2,sz(2));
+    ddq_new = zeros(2,sz(2));
+    for i=1:sz(2)
+        tmp = [(reshape(Q(:,i),[3,10]))',(reshape(DQ(:,i),[3,10]))',(reshape(D2Q(:,i),[3,10]))'];
+        [pq,pdq,pddq] = TrackPoint(tmp,Wiezy,Point);
+        q_new(:,i) = pq';
+        dq_new(:,i) = pdq';
+        ddq_new(:,i) = pddq';
+    end
+    
+    figure
+    plot(T(:,1),q_new(1,:));
+    grid on
+    legend("x");
+    title3 = ['Współrzędna X punktu ', Point, ' w funkcji czasu'];
+    title(title3)
+    xlabel("Czas [s]")
+    ylabel("x[m]")
+    
+    figure
+    plot(T(:,1),q_new(2,:));
+    grid on
+    legend("y");
+    tytul4 = ['Współrzędna Y punktu ', Point, ' w funkcji czasu'];
+    title(tytul4)
+    xlabel("Czas [s]")
+    ylabel("y[m]")
+    
+    figure
+    plot(T(:,1),dq_new(1,:));
+    grid on
+    legend("vx");
+    tytul5 = ['Składowa X prędkości liniowej punktu ',Point ,' mechanizmu'];
+    title(tytul5)
+    xlabel("Czas [s]")
+    ylabel("vx[m/s]")
+    
+    figure
+    plot(T(:,1),dq_new(2,:));
+    grid on
+    legend("vy");
+    tytul6 = ['Składowa Y prędkości liniowej punktu ',Point ,' mechanizmu'];
+    title(tytul6)
+    xlabel("Czas [s]")
+    ylabel("vy[m/s]")
+    
+    figure
+    plot(T(:,1),ddq_new(1,:));
+    grid on
+    legend("ax");
+    tytul7 = ['Składowa X przyspieszenia liniowego punktu ', Point, ' mechanizmu'];
+    title(tytul7)
+    xlabel("Czas [s]")
+    ylabel("ax[m/s2]")
+    
+    figure
+    plot(T(:,1),ddq_new(2,:));
+    grid on
+    legend("ay");
+    tytul8 = ['Składowa Y przyspieszenia liniowego punktu ', Point, ' mechanizmu'];
+    title(tytul8)
+    xlabel("Czas [s]")
+    ylabel("ay[m/s2]")
 
 
 
