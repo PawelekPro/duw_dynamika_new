@@ -2,34 +2,10 @@
 close all;
 clc;
 clear
-
-pobierz_dane;
-% zmienna do wyznaczania liczby rownan wiezow 
-rows = 0;
 tic
 
-for l=1:length(Wiezy)
-    if(lower(Wiezy(l).typ) == "dopisany")
-        if(lower(Wiezy(l).klasa) == "obrotowy")
-            rows = rows + 1;
-        elseif(lower(Wiezy(l).klasa) == "postepowy")
-            rows = rows + 1;
-        else
-            error(['Blad: zle podana klasa wiezu nr', num2str(l)]);
-        end
-    elseif(lower(Wiezy(l).typ) == "kinematyczny")
-        if(lower(Wiezy(l).klasa) == "obrotowy")
-            rows = rows + 2;
-        elseif(lower(Wiezy(l).klasa) == "postepowy")
-            rows = rows + 2;
-        else
-            error(['Blad: zle podana klasa wiezu nr', num2str(l)]);
-        end
-    else
-        error(['Blad: zle podana typ wiezu nr', num2str(l)]);
-    end
-end
-
+pobierz_dane;
+rows = no_equations(Wiezy);
 
 % T to tablica do zapisu kolejnych chwil
 % Q to tablica do zapisu rozwiazan zadania o polozeniu w kolejnych chwilach
@@ -67,15 +43,15 @@ for iter=timepoints
 end
 
 %Wektor położeń:
-Q = [ Y( 1:3*ilosc_cial , : )];
+Q = Y( 1:3*ilosc_cial , : )];
 
 %Wektor predkosci
-DQ = [ Y( 3*ilosc_cial+1:6*ilosc_cial , : )];
+DQ = [Y( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
 %Wektor przyspieszen
-D2Q = [ Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
+D2Q = [Ydot( 3*ilosc_cial+1:6*ilosc_cial , : )];
 
-plot(T,180/pi*D2Q(30,:))
+plot(T,180/pi*D2Q(24,:))
 
 
 

@@ -3,6 +3,9 @@ global epsilon
 epsilon= 1e-6;
 global grav
 grav= 9.80665;
+% Dane z polecenia
+alpha = 315;
+P = 500;
 
 %wczytywanie współrzędnych punktów z polecenia
 A = [0; 0];
@@ -61,11 +64,11 @@ Wiezy = struct('typ',{},...
     'ddotfodt',{},... % druga pochodna funkcji od czasu dla wiezow dopisanych
     'point_name',{});
 
-ilosc_obr=10;
-ilosc_post=2;
-ilosc_cial=10;
-ilosc_sprezyn=2;
-ilosc_sil=1;
+ilosc_obr = 10;
+ilosc_post = 2;
+ilosc_cial = 10;
+ilosc_sprezyn = 2;
+ilosc_sil = 1;
 
 %przypisanie wszystkich rodzajów więzów do elementów struktury
 Wiezy(1)=cell2struct({'kinematyczny', 'obrotowy', 0, 1, E, E-c1, [], [], [], [], [],'E'}',fieldnames(Wiezy));
@@ -83,10 +86,6 @@ Wiezy(12)=cell2struct({'kinematyczny', 'obrotowy', 9, 10,  N-c9, N-c10, [], [], 
 Wiezy(13)=cell2struct({'kinematyczny', 'postepowy', 3, 4,  [-0.15;-0.45], [0.15;0.45], 0, omega*((D-A)/norm(D-A)), 0,0,0,'N'}',fieldnames(Wiezy));
 Wiezy(14)=cell2struct({'kinematyczny', 'postepowy', 5, 6, [-0.15;-0.6], [0.15;0.6], 0, omega*((H-B)/norm(H-B)),0, 0,0,'N'}',fieldnames(Wiezy));
 
-
-% Dane z polecenia
-alpha = 315;
-P = 500;
 
 Bezwladnosci = struct('m',{},... % masa członu (m)
     'Iz',{}); % moment bezwładności członu względem osi z (I_z)
